@@ -61,3 +61,29 @@ ostream& operator << (ostream& out, const persoane& pers) {
 	out << "-----------------------------------------" << endl;
 	return out;
 }
+
+//CONSTRUCTORUL DE COPIERE
+persoane::persoane(const persoane& old) {
+
+	this->anul_nasterii = old.anul_nasterii;
+	this->nume = old.nume;
+	this->sex = old.sex;
+
+}
+
+//CONSTRUCTOR DEFAUT(PT CA ERA CIOCNIRE CU CEL DE COPIERE SI APARUSERA ERORI)
+persoane::persoane() {
+	this->anul_nasterii = NULL;
+	this->nume = ' ';
+	this->sex = ' ';
+	//this->nume = NULL;
+	//this->sex = NULL;
+}
+
+
+persoane operator+ (persoane& p1) {
+
+	cout << "Introdu varsta noua!" << endl;
+	cin >> p1.anul_nasterii;
+	return p1;
+}

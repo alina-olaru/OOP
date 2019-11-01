@@ -1,12 +1,34 @@
 #include "Resources.h"
+#include <fstream>
 
 using namespace std;
 
 //Am folosit constructor parametrizat cu valoare default=0 pentru cazul cand nu e dat ca parametru constructorului la crearea unei noi instante.
+baza_de_date::baza_de_date() {
+	this->nr_persoane = 0;
+	this->p = NULL;
+}
+
+void baza_de_date::initializare_bd_console(int n) {
+	this->nr_persoane = n;
+	//Alocare memorie in campul p pt n pointeri de persoane
+	this->p = new persoane * [n];
+	//Initializez toate campurile cu n
+	for (int i = 0; i < this->nr_persoane; i++) {
+		this->p[i] = NULL;
+	}
+	//Populez vectorul de persoane apelandu-se metoda de creare a unei instante de persoane.
+	for (int i = 0; i < this->nr_persoane; i++) {
+		this->p[i] = this->create_person();
+	}
+	cout << "Baza de date a fost initializata!" << endl;
+}
+
+
 
 baza_de_date::baza_de_date(int n=0) {
 
-	this->nr_persoane = n;
+/*	this->nr_persoane = n;
 	//Alocare memorie in campul p pt n pointeri de persoane
 	this->p = new persoane * [n];
 //Initializez toate campurile cu n
@@ -17,7 +39,63 @@ baza_de_date::baza_de_date(int n=0) {
 	for (int i = 0; i < this->nr_persoane; i++) {
 		this->p[i] = this->create_person();
 	}
-	cout << "Baza de date a fost initializata!" << endl;
+	cout << "Baza de date a fost initializata!" << endl;*/
+	this->initializare_bd_console(n);
+}
+
+//cerinta 2
+baza_de_date::baza_de_date(int n, bool type){
+
+    if(type==true)
+    {
+       this->initializare_bd_console(n);
+    }else
+    {
+        this->nr_persoane = n;
+        string file_name;
+        cout<<endl<<"Fisierul trebuie sa fie in acelasi director!"<<endl<<endl;
+        cout<<"Introdu numele fisierului:";
+        cin>>file_name;
+        char* file_name_char = new char[file_name.length()+1];
+        std::strcpy (file_name_char, file_name.c_str());
+        ifstream f(file_name_char);
+
+        if(f){
+        string test;
+            f>>this->nr_persoane;
+            getline(f, test);
+            cout<<this->nr_persoane<<endl;
+            this->p = new persoane * [this->nr_persoane];
+            for(int idx=0;idx<this->nr_persoane;idx++)
+            {
+                string namee;
+                int an_nastere;
+                string sex;
+
+                getline(f, namee);
+                f >> an_nastere;
+                getline(f, sex);
+                getline(f, sex);
+
+
+                cout<<sex<<endl;
+
+                persoane* newPersoana = new persoane();
+                newPersoana->SetName(namee);
+                newPersoana->SetBirth(an_nastere);
+                newPersoana->SetSex(sex.at(0));
+
+                this->p[idx] = newPersoana;
+            }
+
+
+        }else
+        {
+            cout<<endl<<"Nu s-a putut deschide fisierul!"<<endl;
+        }
+
+    }
+
 }
 
 
@@ -279,6 +357,110 @@ ostream& operator << (ostream& out, const baza_de_date& bd) {
 	return out;
 }
 
+istream& operator >> (istream& in, const baza_de_date& bd) {
+	cout << endl << endl;
+	persoane* newPersoana = new persoane();
+	string nume;
+	int an_nastere;
+
+	char sex;
+
+	  
+	while (1)
+	{
+		try {
+			cout << "Numele persoanei: ";
+			getchar();
+			in >> nume;
+			newPersoana->SetName(nume);
+			break;
+		}
+
+		catch (const std::invalid_argument & n) {
+			cout << n.what() << endl;
+			continue;
+		}
+
+
+		catch (...) {
+			cout << "A aparut o eroare.Va rog reintroduceti numele" << endl;
+			continue;
+		}
+	}
+	while (1) {
+		try {
+			cout << "Anul nasterii: ";
+			in >> an_nastere;
+			newPersoana->SetBirth(an_nastere);
+			break;
+		}
+		catch (const std::invalid_argument & e) {
+			cout << e.what() << endl;
+			continue;
+		}
+		catch (...) {
+			cout << "A aparut o eroare.Reintrodu anul nasterii." << endl;
+			continue;
+		}
+	}
+
+
+	while (1) {
+		try {
+
+			cout << "Sex (M/F):";
+			in >> sex;
+			newPersoana->SetSex(sex);
+			break;
+
+		}
+		catch (const std::invalid_argument & f) {
+			cout << f.what() << endl;
+			continue;
+		}
+		catch (...) {
+			cout << "A aparut o eroare.Reintroduceti sexul" << endl;
+			continue;
+		}
+	}
+
+	return in;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
 //functia comparator pt afisarea descr. dupa data nasterii
 int compare_descresc(const void* a, const void* b) {
 	persoane* a1 = *(persoane**)a;
@@ -309,4 +491,37 @@ void baza_de_date::afis_alfabetic_desc() {
 	qsort(this->p, this->nr_persoane, sizeof(persoane*), compare_d_alfabetic);
 	this->afis();
 	//cout << *(this);
+}
+
+//Am considerat :clasa baza_De_Date b clasa unde primesc pointerul catre persoana cu datele pe care le cauti tu .Am verificat,asadar,
+//pt persoanele din clasa mea(a) daca coincid campurile cu p[1].camp.
+bool operator!=(baza_de_date& a, baza_de_date& b) {
+	int flag = 0;
+	if (a.nr_persoane == 0) {
+		cout << "Nu exista persoane in baza de date!" << endl << endl;
+	}
+	for (int i = 0; i < a.nr_persoane; i++)
+	{
+		if (a.p[i]->GetName() == b.p[1]->GetName()) {
+			flag = 1;
+		}
+		if (a.p[i]->GetBirth() == b.p[1]->GetBirth()) {
+			flag = 2;
+		}
+		if (a.p[i]->GetSex() == b.p[1]->GetSex()) {
+			flag = 3;
+		}
+	}
+	if (flag == 3)
+	{
+		cout << "Exista o persoana cu aceste date in baza noasta de date" << endl;
+		return true;
+	}
+	if (flag != 3)
+	{
+		cout << "Nu exista o persoana cu aceste date in baza noasta de date" << endl;
+		
+	}
+
+	return false;
 }

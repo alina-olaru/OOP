@@ -25,6 +25,10 @@ public:
 	char GetSex();
 	//Setter pentru sex
 	void SetSex(char);
+	persoane(const persoane& old);
+	persoane();
+	friend persoane operator+ (persoane &p1);
+	
 
 
 };

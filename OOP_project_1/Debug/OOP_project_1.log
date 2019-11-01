@@ -1,5 +1,5 @@
 ﻿  BD.cpp
-  Main.cpp
+C:\Users\andrei.funaru\Desktop\OOP1\OOP\OOP_project_1\BD.cpp(60,1): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   persoane.cpp
   Generating Code...
-  OOP_project_1.vcxproj -> C:\Users\andrei.funaru\Desktop\facultate (2)\facultate\oop\Projects\OOP_project_1\Debug\OOP_project_1.exe
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : see declaration of 'strcpy'
